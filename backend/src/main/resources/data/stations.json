@@ -25,6 +25,14 @@
       "description": "Radio Paradise World Mix"
     },
     {
+      "url": "http://ice2.somafm.com/deepspaceone-128-aac",
+      "description": "Soma FM: Deep Space One"
+    },
+    {
+      "url": "http://ice2.somafm.com/groovesalad-128-aac",
+      "description": "Soma FM: Groove Salad"
+    },
+    {
       "url": "http://thecheese.ddns.net:8004/stream.xspf",
       "description": "The Cheese (New Zealand)"
     }
