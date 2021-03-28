@@ -25,6 +25,26 @@
       "description": "Radio Paradise World Mix"
     },
     {
+      "url": "http://144.217.29.205:80",
+      "description": "Hard Radio"
+    },
+    {
+      "url": "http://live7.avf.ch:8000/ipmusic320",
+      "description": "IP Music (Switzerland)"
+    },
+    {
+      "url": "http://live7.avf.ch:8000/ipmusicslow320",
+      "description": "IP Music Slow (Switzerland)"
+    },
+    {
+      "url": "http://209.95.35.49:7033/stream",
+      "description": "WDNA (Jazz)"
+    },
+    {
+      "url": "http://ais-edge12-113fm-bhs07.cdnstream.com/1719_128",
+      "description": "113 FM Awesome 80s"
+    },
+    {
       "url": "http://ice2.somafm.com/deepspaceone-128-aac",
       "description": "Soma FM: Deep Space One"
     },
