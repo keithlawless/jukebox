@@ -1,0 +1,23 @@
+<div class="container" style="margin-top: 70px;">
+  <h3>Folders</h3>
+  <ul>
+    <li *ngIf="showUpFolder()" (click)="upFolder()" class="folder-item">Up One Folder</li>
+    <li *ngFor="let dir of folder.folders">
+      <span (click)="refreshFolder(dir)" class="folder-item">{{displayFolder(dir)}}</span>
+    </li>
+  </ul>
+  <div *ngIf="folder.files.length > 0">
+    <div class="song-title-area">
+      <span>Songs</span>
+      <button type="button" class="btn btn-secondary" (click)="queueAll()">Queue All</button>
+    </div>
+    <ul class="song-list">
+      <li *ngFor="let file of folder.files">
+        <span (click)="queueSong(file)" class="song-item">{{displaySong(file)}}</span>
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="folder.files.length === 0">
+    <h3>No songs in this folder</h3>
+  </div>
+</div>

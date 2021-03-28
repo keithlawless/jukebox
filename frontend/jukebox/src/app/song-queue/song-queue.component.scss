@@ -1,0 +1,15 @@
+.song-row {
+  margin-top: 5px;
+}
+.song-row:nth-child(even) {
+  background-color: lightcyan;
+}
+
+.song-text {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.song-text li {
+  list-style: none;
+}

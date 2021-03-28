@@ -1,0 +1,44 @@
+<div class="container" style="margin-top: 70px;">
+  <div *ngIf="nowPlaying != null">
+    <h3>Now Playing</h3>
+    <div class="row">
+      <div class="col-4">
+        <img *ngIf="nowPlaying.mrl != null && nowPlaying.mrl.length > 0" height="300" width="300" src="{{imageURL(nowPlaying.mrl)}}">
+      </div>
+      <div class="col-8">
+        <ul *ngIf="isRadio() == false" class="song-text">
+          <li><b>Song:</b> {{nowPlaying.title}}</li>
+          <li><b>Artist:</b> {{nowPlaying.artist}}</li>
+          <li><b>Album:</b> {{nowPlaying.album}}</li>
+        </ul>
+        <ul *ngIf="isRadio()" class="song-text">
+          <li><b>Internet Radio</b></li>
+          <li><b>URL:</b> {{nowPlaying.mrl}}</li>
+        </ul>
+        <div *ngIf="isPlaying()" class="btn-toolbar" role="toolbar">
+          <div class="btn-group btn-group-lg mr-2" role="group">
+            <button type="button" class="btn btn-secondary" disabled>Playing</button>
+            <button type="button" class="btn btn-secondary" (click)="pause()">Pause</button>
+            <button type="button" class="btn btn-secondary" (click)="stop()">Stop</button>
+          </div>
+          <div *ngIf="depth > 0" class="btn-group btn-group-lg mr-2" role="group">
+            <button type="button" class="btn btn-secondary" (click)="next()">Next Song</button>
+          </div>
+        </div>
+        <div *ngIf="isPaused()" class="btn-group btn-group-lg" role="group">
+          <button type="button" class="btn btn-secondary" (click)="resume()">Resume</button>
+          <button type="button" class="btn btn-secondary" disabled>Paused</button>
+          <button type="button" class="btn btn-secondary" (click)="stop()">Stop</button>
+        </div>
+        <div *ngIf="isStopped()" class="btn-group btn-group-lg" role="group">
+          <button type="button" class="btn btn-secondary" (click)="resume()">Play</button>
+          <button type="button" class="btn btn-secondary" (click)="pause()">Pause</button>
+          <button type="button" class="btn btn-secondary" disabled>Stopped</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="nowPlaying === null">
+    <h3>No song is playing right now.</h3>
+  </div>
+</div>

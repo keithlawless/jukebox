@@ -1,0 +1,30 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.3'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.keithlawless'
+version = '0.0.3-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+	maven {
+		url "https://dl.bintray.com/ijabz/maven"
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'uk.co.caprica:vlcj:4.7.0'
+	implementation 'com.google.guava:guava:30.1-jre'
+	implementation 'net.jthink:jaudiotagger:2.2.3'
+	implementation group: 'commons-io', name: 'commons-io', version: '2.8.0'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}

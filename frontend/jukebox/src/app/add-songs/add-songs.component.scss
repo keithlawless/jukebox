@@ -1,0 +1,45 @@
+.folder-item {
+  color: green;
+  cursor: pointer;
+}
+
+.folder-item:hover {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.folder-item:active {
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.song-item {
+  color: blue;
+  cursor: pointer;
+}
+
+.song-item:hover {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.song-item:active {
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.song-title-area {
+  display: inline;
+}
+
+.song-title-area span {
+  font-size: 28px;
+  font-weight: 500;
+  margin-right: 50px;
+}
+
+.song-list {
+  margin-top: 30px;
+}

@@ -1,0 +1,19 @@
+<div *ngIf="metaList.size > 0" class="container" style="margin-top: 70px;">
+  <h3>Song Queue</h3>
+  <div class="row song-row" *ngFor="let meta of metaList.queue;">
+    <div class="col-3">
+      <img height="200" width="200" src="{{imageURL(meta.mrl)}}">
+    </div>
+    <div class="col-9">
+      <ul class="song-text">
+        <li *ngIf="meta.title != ''"><b>Song:</b> {{meta.title}}</li>
+        <li *ngIf="meta.title == null || meta.title === ''"><b>Song:</b> {{meta.mrl}}</li>
+        <li><b>Artist:</b> {{meta.artist}}</li>
+        <li><b>Album:</b> {{meta.album}}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div *ngIf="metaList === null || metaList.size === 0" class="container" style="margin-top: 70px;">
+  <h3>Song Queue is Empty :(</h3>
+</div>
