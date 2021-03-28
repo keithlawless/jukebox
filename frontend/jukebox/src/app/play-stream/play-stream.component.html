@@ -5,12 +5,10 @@
     <button type="button" class="btn btn-secondary" (click)="stop()">Stop</button>
   </div>
   <ul>
-    <li class="stream-item" (click)="play('https://streams.audio.wgbh.org:8200/wgbh')">WGBH Radio</li>
-    <li class="stream-item" (click)="play('https://icecast-stream.wbur.org/wbur')">WBUR Radio</li>
-    <li class="stream-item" (click)="play('https://stream.radioparadise.com/aac-320')">Radio Paradise Main Mix</li>
-    <li class="stream-item" (click)="play('https://stream.radioparadise.com/mellow-320')">Radio Paradise Mello Mix</li>
-    <li class="stream-item" (click)="play('https://stream.radioparadise.com/rock-320')">Radio Paradise Rock Mix</li>
-    <li class="stream-item" (click)="play('https://stream.radioparadise.com/world-etc-320')">Radio Paradise World/Etc Mix</li>
-    <li class="stream-item" (click)="play('http://thecheese.ddns.net:8004/stream.xspf')">The Cheese (New Zealand)</li>
+  <div *ngIf="radioStations.stations.length > 0">
+    <li *ngFor="let station of radioStations.stations" class="stream-item" (click)="play(station.url)">
+      {{station.description}}
+    </li>
+  </div>
   </ul>
 </div>
