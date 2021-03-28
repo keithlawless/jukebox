@@ -1,0 +1,32 @@
+{
+  "stations": [
+    {
+      "url": "https://streams.audio.wgbh.org:8200/wgbh",
+      "description": "WGBH Radio"
+    },
+    {
+      "url": "https://icecast-stream.wbur.org/wbur",
+      "description": "WBUR Radio"
+    },
+    {
+      "url": "https://stream.radioparadise.com/aac-320",
+      "description": "Radio Paradise Main Mix"
+    },
+    {
+      "url": "https://stream.radioparadise.com/mellow-320",
+      "description": "Radio Paradise Mello Mix"
+    },
+    {
+      "url": "https://stream.radioparadise.com/rock-320",
+      "description": "Radio Paradise Rock Mix"
+    },
+    {
+      "url": "https://stream.radioparadise.com/world-etc-320",
+      "description": "Radio Paradise World Mix"
+    },
+    {
+      "url": "http://thecheese.ddns.net:8004/stream.xspf",
+      "description": "The Cheese (New Zealand)"
+    }
+  ]
+}
