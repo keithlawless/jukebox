@@ -89,4 +89,25 @@ export class NowPlayingComponent implements OnInit {
     return !this.nowPlaying.mrl.startsWith('file');
   }
 
+  formatDuration(): string {
+    return this.formatTime(this.nowPlaying.duration);
+  }
+
+  formatElapsed(): string {
+    return this.formatTime(this.nowPlaying.elapsedTime);
+  }
+
+  formatTime(time: number): string {
+    let seconds = time / 1000;
+    const minutes = Math.floor(seconds / 60 );
+    seconds = Math.floor(seconds % 60);
+    return minutes + ':' + zeroPad(seconds, 2);
+  }
+
+  formatProgress(): string {
+    const progress = this.nowPlaying.elapsedTime / this.nowPlaying.duration * 100;
+    return 'width: ' + zeroPad(progress, 2) + '%';
+  }
 }
+
+const zeroPad = (num: number, places: number) => String(num).padStart(places, '0');

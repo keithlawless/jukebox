@@ -2,15 +2,20 @@
   <div *ngIf="nowPlaying != null">
     <h3>Now Playing</h3>
     <div class="row">
-      <div class="col-4">
+      <div class="col-12 col-lg-4">
         <img *ngIf="nowPlaying.mrl != null && nowPlaying.mrl.length > 0" height="300" width="300" src="{{imageURL(nowPlaying.mrl)}}">
       </div>
-      <div class="col-8">
+      <div class="col-12 col-lg-8">
         <ul *ngIf="isRadio() == false" class="song-text">
           <li><b>Song:</b> {{nowPlaying.title}}</li>
           <li><b>Artist:</b> {{nowPlaying.artist}}</li>
           <li><b>Album:</b> {{nowPlaying.album}}</li>
         </ul>
+        <div *ngIf="isRadio() == false" class="progress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+               [attr.aria-valuenow]="nowPlaying.elapsedTime" [attr.style]="formatProgress()"
+               [attr.aria-valuemax]="nowPlaying.duration">{{formatElapsed()}} / {{formatDuration()}}</div>
+        </div>
         <ul *ngIf="isRadio()" class="song-text">
           <li><b>Internet Radio</b></li>
           <li><b>URL:</b> {{nowPlaying.mrl}}</li>

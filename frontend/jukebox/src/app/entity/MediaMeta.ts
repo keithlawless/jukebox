@@ -3,6 +3,8 @@ export class MediaMeta {
   artist: string;
   album: string;
   title: string;
+  duration: number;
+  elapsedTime: number;
   playState: string;
 
   constructor() {
@@ -10,6 +12,8 @@ export class MediaMeta {
     this.artist = '';
     this.album = '';
     this.title = '';
+    this.duration = 0;
+    this.elapsedTime = 0;
     this.playState = '';
   }
 }
