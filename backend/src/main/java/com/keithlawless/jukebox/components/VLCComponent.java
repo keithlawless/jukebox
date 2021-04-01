@@ -147,7 +147,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
 
     @Override
     public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-
+        appMediaEventPublisher.publishMediaTimingEvent(newTime);
     }
 
     @Override
@@ -264,6 +264,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
             mediaMeta.setArtist(media.meta().get(Meta.ARTIST));
             mediaMeta.setTitle(media.meta().get(Meta.TITLE));
             mediaMeta.setAlbum(media.meta().get(Meta.ALBUM));
+            mediaMeta.setDuration(media.info().duration());
             appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
         }
     }

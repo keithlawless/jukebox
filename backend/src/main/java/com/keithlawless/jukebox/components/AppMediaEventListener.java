@@ -41,4 +41,9 @@ public class AppMediaEventListener {
     public void consumeMediaStoppedEvent(MediaStoppedEvent mediaStoppedEvent) {
         mediaService.setPlayState(mediaStoppedEvent.getPlayState());
     }
+
+    @EventListener
+    public void consumerMediaTimingEvent(MediaTimingEvent mediaTimingEvent) {
+        mediaService.setElapsedTime(mediaTimingEvent.getTime());
+    }
 }

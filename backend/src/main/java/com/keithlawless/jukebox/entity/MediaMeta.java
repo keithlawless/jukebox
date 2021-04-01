@@ -9,6 +9,8 @@ public class MediaMeta implements Serializable {
     private String artist;
     private String album;
     private String title;
+    private long duration;
+    private long elapsedTime;
     private PlayState playState;
 
     public String getMrl() {
@@ -41,6 +43,22 @@ public class MediaMeta implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(long elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 
     public PlayState getPlayState() {

@@ -123,4 +123,6 @@ public class MediaService {
     public void setPlayState(PlayState playState) {
         this.playState = playState;
     }
+
+    public void setElapsedTime(long time) { this.mediaMeta.setElapsedTime(time); }
 }

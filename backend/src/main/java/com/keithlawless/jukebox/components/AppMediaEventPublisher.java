@@ -35,4 +35,9 @@ public class AppMediaEventPublisher {
         MediaStoppedEvent mediaStoppedEvent = new MediaStoppedEvent(this);
         applicationEventPublisher.publishEvent(mediaStoppedEvent);
     }
+
+    public void publishMediaTimingEvent(long time) {
+        MediaTimingEvent mediaTimingEvent = new MediaTimingEvent(this, time);
+        applicationEventPublisher.publishEvent(mediaTimingEvent);
+    }
 }
