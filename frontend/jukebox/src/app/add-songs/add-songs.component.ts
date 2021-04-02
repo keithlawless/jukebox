@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FolderService} from '../service/folder.service';
 import {Folder} from '../entity/Folder';
 import {SongQueueService} from '../service/song-queue.service';
+import {Breadcrumb} from '../entity/Breadcrumb';
 
 @Component({
   selector: 'app-add-songs',
@@ -12,14 +13,18 @@ export class AddSongsComponent implements OnInit {
 
   public folder: Folder;
   public origFolderMrl: string;
+  public breadcrumbs: Breadcrumb[];
 
   constructor(private folderService: FolderService, private songQueueService: SongQueueService) {
     this.folder = new Folder();
     this.origFolderMrl = '';
+    this.breadcrumbs = [];
     this.folderService.list()
       .subscribe( res => {
         this.folder = res;
         this.origFolderMrl = this.folder.mrl;
+        const home = new Breadcrumb('Home', this.folder.mrl);
+        this.breadcrumbs.push(home);
       });
   }
 
@@ -69,7 +74,24 @@ export class AddSongsComponent implements OnInit {
   upFolder(): void {
     let upFolder = this.folder.mrl.substring(0, this.folder.mrl.length - 1);
     upFolder = upFolder.substring(0, (upFolder.lastIndexOf('/') + 1));
+    this.breadcrumbs.pop();
     this.refreshFolder(encodeURIComponent(upFolder));
+  }
+
+  downFolder(entryPoint: string): void {
+    const breadcrumb = new Breadcrumb(this.displayFolder(entryPoint), entryPoint);
+    this.breadcrumbs.push(breadcrumb);
+    this.refreshFolder(entryPoint);
+  }
+
+  jumpFolder(entryPoint: string): void {
+    // "Back Up" the breadcrumbs as necessary.
+    let lastItem: Breadcrumb | undefined = this.breadcrumbs[this.breadcrumbs.length - 1];
+    while (lastItem !== undefined && lastItem.url !== entryPoint) {
+      this.breadcrumbs.pop();
+      lastItem = this.breadcrumbs[this.breadcrumbs.length - 1];
+    }
+    this.refreshFolder(entryPoint);
   }
 
   queueSong(mrl: string): void {

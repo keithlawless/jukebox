@@ -43,3 +43,23 @@
 .song-list {
   margin-top: 30px;
 }
+
+.breadcrumb {
+  background-color: white;
+}
+
+.breadcrumb-item {
+  color: blue;
+  cursor: pointer;
+}
+
+.breadcrumb-item:hover {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.breadcrumb-item:active {
+  color: red;
+  font-style: italic;
+  font-weight: bold;
+}

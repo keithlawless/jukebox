@@ -1,11 +1,19 @@
 <div class="container" style="margin-top: 70px;">
-  <h3>Folders</h3>
-  <ul>
-    <li *ngIf="showUpFolder()" (click)="upFolder()" class="folder-item">Up One Folder</li>
-    <li *ngFor="let dir of folder.folders">
-      <span (click)="refreshFolder(dir)" class="folder-item">{{displayFolder(dir)}}</span>
-    </li>
-  </ul>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li *ngFor="let breadcrumb of breadcrumbs" class="breadcrumb-item">
+        <a (click)="jumpFolder(breadcrumb.url)">{{breadcrumb.title}}</a>
+      </li>
+    </ol>
+  </nav>
+  <div *ngIf="folder.folders.length > 0">
+    <h3>Folders</h3>
+    <ul>
+      <li *ngFor="let dir of folder.folders">
+        <span (click)="downFolder(dir)" class="folder-item">{{displayFolder(dir)}}</span>
+      </li>
+    </ul>
+  </div>
   <div *ngIf="folder.files.length > 0">
     <div class="song-title-area">
       <span>Songs</span>
