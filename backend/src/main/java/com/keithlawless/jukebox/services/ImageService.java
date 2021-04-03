@@ -1,5 +1,6 @@
 package com.keithlawless.jukebox.services;
 
+import com.google.common.net.UrlEscapers;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,9 +11,11 @@ import com.keithlawless.jukebox.entity.Artwork;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.*;
 import java.util.logging.Logger;
 
@@ -61,14 +64,14 @@ public class ImageService {
     }
 
     public String locateImage(String mrl) {
-        mrl = mrl.replace(" ", "%20");
-
         // If the mrl is not a file:// type, return the default image.
         if(mrl.startsWith("file") == false ) {
             return defaultImage();
         }
 
         try {
+            mrl = UrlEscapers.urlFragmentEscaper().escape(mrl);
+
             Path path = Paths.get(new URI(mrl));
             Path parent = path.getParent();
 
@@ -84,12 +87,12 @@ public class ImageService {
         }
         catch(URISyntaxException syntaxException) {
             logger.info("URISyntaxException in locateImage():" +
-                    syntaxException.getLocalizedMessage());
+                    syntaxException.toString());
         }
         catch(IOException | DirectoryIteratorException x) {
             // IOException can never be thrown by the iteration.
             // In this snippet, it can only be thrown by newDirectoryStream.
-            logger.info("Exception caught in locateImage(): " + x.getLocalizedMessage());
+            logger.info("Exception caught in locateImage(): " + x.toString());
         }
 
         ClassPathResource defaultImageResource = new ClassPathResource(defaultImageLocation);

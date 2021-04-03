@@ -1,5 +1,6 @@
 package com.keithlawless.jukebox.services;
 
+import com.google.common.net.UrlEscapers;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -9,8 +10,10 @@ import com.keithlawless.jukebox.entity.Artwork;
 import com.keithlawless.jukebox.entity.MediaMeta;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
@@ -55,15 +58,12 @@ public class TagService {
     }
 
     public Artwork getArtwork(String mrl) {
-        String targetMrl;
-        if (mrl != null) {
-            targetMrl = mrl.replace(" ", "%20");
-        } else {
-            return null;
-        }
-
         File file;
+
         try {
+            String targetMrl;
+            targetMrl = UrlEscapers.urlFragmentEscaper().escape(mrl);
+
             Path path = Paths.get(new URI(targetMrl));
             file = path.toFile();
         }
@@ -83,7 +83,7 @@ public class TagService {
             }
         }
         catch(Exception e) {
-            logger.info("Exception in readTags(): " + e.toString());
+            logger.info("Exception in getArtwork(): " + e.toString());
         }
 
         return null;
