@@ -1,5 +1,6 @@
 package com.keithlawless.jukebox.components;
 
+import com.keithlawless.jukebox.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.keithlawless.jukebox.entity.MediaMeta;
@@ -11,6 +12,8 @@ import uk.co.caprica.vlcj.player.base.State;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 @Component
@@ -20,6 +23,9 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
 
     @Autowired
     private AppMediaEventPublisher appMediaEventPublisher;
+
+    @Autowired
+    private TagService tagService;
 
     private MediaPlayerFactory mediaPlayerFactory;
     private MediaPlayer mediaPlayer;
@@ -259,11 +265,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
     @Override
     public void mediaParsedChanged(Media media, MediaParsedStatus newStatus) {
         if(newStatus == MediaParsedStatus.DONE) {
-            MediaMeta mediaMeta = new MediaMeta();
-            mediaMeta.setMrl(media.info().mrl());
-            mediaMeta.setArtist(media.meta().get(Meta.ARTIST));
-            mediaMeta.setTitle(media.meta().get(Meta.TITLE));
-            mediaMeta.setAlbum(media.meta().get(Meta.ALBUM));
+            MediaMeta mediaMeta = tagService.readTags(media.info().mrl());
             mediaMeta.setDuration(media.info().duration());
             appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
         }

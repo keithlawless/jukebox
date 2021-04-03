@@ -3,6 +3,7 @@ package com.keithlawless.jukebox.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.keithlawless.jukebox.entity.RadioStations;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -10,14 +11,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 @Service
 public class InternetRadioService {
     private static final Logger logger = Logger.getLogger(InternetRadioService.class.getName());
-    private static String dataFile = "/data/stations.json";
+
+    @Value("${com.keithlawless.jukebox.station.data}")
+    private String dataFile;
 
     public RadioStations getStations() {
         RadioStations stations = new RadioStations();
