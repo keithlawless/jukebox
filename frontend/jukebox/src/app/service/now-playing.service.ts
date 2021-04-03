@@ -14,7 +14,7 @@ export class NowPlayingService implements OnDestroy {
   private stopPolling = new Subject();
 
   constructor(private http: HttpClient) {
-    this.nowPlaying$ = timer(1, 5000).pipe(
+    this.nowPlaying$ = timer(1, 2000).pipe(
       switchMap(() => http.get<MediaMeta>('/api/queue/playing')),
       retry(),
       share(),

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {MediaMeta} from '../entity/MediaMeta';
 import {NowPlayingService} from '../service/now-playing.service';
-import {MusicResourceLocator} from '../entity/MusicResourceLocator';
 import {SongQueueService} from '../service/song-queue.service';
 
 @Component({

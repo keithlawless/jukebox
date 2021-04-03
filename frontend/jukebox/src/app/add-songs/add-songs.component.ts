@@ -42,20 +42,14 @@ export class AddSongsComponent implements OnInit {
     let lastItem = decodeURIComponent(mrl);
     lastItem = lastItem.substring(0, lastItem.length - 1);
     lastItem = lastItem.substring(lastItem.lastIndexOf('/') + 1);
-    lastItem = this.replaceAll(lastItem, '%20', ' ');
-    lastItem = this.replaceAll(lastItem, '%E2%80%99', '\'');
-    lastItem = this.replaceAll(lastItem, '%C2%BF', '?');
-    lastItem = this.replaceAll(lastItem, '%26', '&');
+    lastItem = decodeURIComponent(lastItem);
     return lastItem;
   }
 
   displaySong(mrl: string): string {
     let lastItem = decodeURIComponent(mrl);
     lastItem = lastItem.substring(lastItem.lastIndexOf('/') + 1);
-    lastItem = this.replaceAll(lastItem, '%20', ' ');
-    lastItem = this.replaceAll(lastItem, '%E2%80%99', '\'');
-    lastItem = this.replaceAll(lastItem, '%C2%BF', '?');
-    lastItem = this.replaceAll(lastItem, '%26', '&');
+    lastItem = decodeURIComponent(lastItem);
     return lastItem;
   }
 
