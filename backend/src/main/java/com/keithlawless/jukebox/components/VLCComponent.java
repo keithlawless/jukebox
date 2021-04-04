@@ -12,8 +12,6 @@ import uk.co.caprica.vlcj.player.base.State;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 @Component

@@ -10,10 +10,8 @@ import com.keithlawless.jukebox.entity.Artwork;
 import com.keithlawless.jukebox.entity.MediaMeta;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
