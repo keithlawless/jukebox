@@ -5,9 +5,7 @@ import com.keithlawless.jukebox.entity.Folder;
 import com.keithlawless.jukebox.entity.MediaMeta;
 import com.keithlawless.jukebox.enums.IndexState;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -24,7 +22,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -32,7 +29,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -146,8 +142,6 @@ public class SearchService {
             TopDocs topDocs = searcher.search(query, 101);
             ScoreDoc[] hits = topDocs.scoreDocs;
 
-            logger.info("Result count: "  + hits.length);
-
             for(ScoreDoc hit : hits) {
                 Document doc = searcher.doc(hit.doc);
 
@@ -158,7 +152,6 @@ public class SearchService {
                 mediaMeta.setTitle(doc.get("title"));
 
                 resultList.add(mediaMeta);
-
             }
 
         }
