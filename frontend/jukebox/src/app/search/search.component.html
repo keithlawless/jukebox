@@ -1,0 +1,37 @@
+<div class="container" style="margin-top: 70px;">
+  <div class="input-group rounded">
+    <input #searchTermInput type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+           aria-describedby="search-addon" />
+  </div>
+  <div class="results-pane" *ngIf="isSearching">
+    <h3>Searching...</h3>
+  </div>
+  <div class="results-pane" *ngIf="isSearching == false && searchResults.length == 0">
+    <h3>There are no results.</h3>
+  </div>
+  <div class="results-pane" *ngIf="isSearching == false && searchResults.length > 0">
+    <h3>Search Results</h3>
+    <div *ngIf="searchResults.length > 100">
+      The first 100 results are displayed.
+    </div>
+    <div class="results-pane" *ngIf="isSearching == false && searchResults.length <= 100">
+      There are {{searchResults.length}} results.
+    </div>
+    <div class="row song-row" *ngFor="let result of searchResults;">
+      <div class="col-12 col-md-3">
+        <img height="150" width="150" src="{{imageURL(result.mrl)}}">
+      </div>
+      <div class="col-12 col-md-9">
+        <ul class="song-text">
+          <li *ngIf="result.title != ''"><b>Song:</b> {{result.title}}</li>
+          <li *ngIf="result.title == null || result.title === ''"><b>Song:</b> {{result.mrl}}</li>
+          <li><b>Artist:</b> {{result.artist}}</li>
+          <li><b>Album:</b> {{result.album}}</li>
+          <li>
+            <button type="button" class="btn btn-secondary song-button" (click)="queueSong(result.mrl)">Queue Song</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

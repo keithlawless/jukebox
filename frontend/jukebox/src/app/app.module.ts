@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { AddSongsComponent } from './add-songs/add-songs.component';
 import { FooterComponent } from './footer/footer.component';
 import { PlayStreamComponent } from './play-stream/play-stream.component';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { PlayStreamComponent } from './play-stream/play-stream.component';
     HomeComponent,
     AddSongsComponent,
     FooterComponent,
-    PlayStreamComponent
+    PlayStreamComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
