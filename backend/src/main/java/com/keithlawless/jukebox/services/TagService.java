@@ -22,14 +22,24 @@ public class TagService {
 
     public MediaMeta readTags(String mrl) {
         String targetMrl;
+
         if (mrl != null) {
-            targetMrl = mrl.replace(" ", "%20");
-        } else {
+            targetMrl = UrlEscapers.urlFragmentEscaper().escape(mrl);
+        }
+        else {
             return null;
         }
 
         MediaMeta mediaMeta = new MediaMeta();
         mediaMeta.setMrl(targetMrl);
+
+        // If an internet stream, don't attempt to extract tags
+        if(targetMrl.startsWith("file") == false) {
+            mediaMeta.setArtist("Internet Radio");
+            mediaMeta.setAlbum("");
+            mediaMeta.setTitle("");
+            return mediaMeta;
+        }
 
         File file;
         try {

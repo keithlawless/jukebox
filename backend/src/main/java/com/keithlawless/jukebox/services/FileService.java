@@ -1,5 +1,6 @@
 package com.keithlawless.jukebox.services;
 
+import com.google.common.net.UrlEscapers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.keithlawless.jukebox.entity.Folder;
@@ -7,8 +8,6 @@ import com.keithlawless.jukebox.entity.Folder;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +34,7 @@ public class FileService {
 
         String dir;
         if (entryPoint != null) {
-            dir = entryPoint.replace(" ", "%20");
+            dir = UrlEscapers.urlFragmentEscaper().escape(entryPoint);
         } else {
             dir = baseDir;
         }
@@ -58,16 +57,14 @@ public class FileService {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
             for (Path file: stream) {
                 if(file.toUri().toASCIIString().endsWith("/")) {
-                    String encodedFile = file.toUri().toASCIIString();
-                    encodedFile = URLEncoder.encode(encodedFile, StandardCharsets.UTF_8.toString());
+                    String encodedFile = fixEncoding(file.toUri().toString());
                     folder.addFolder(encodedFile);
                 }
                 else {
                     //Only include files that match our list of included extensions (i.e. music files)
                     String ext = com.google.common.io.Files.getFileExtension(file.getFileName().toString());
                     if(includeExtensions.contains(ext)) {
-                        String encodedFile = file.toUri().toASCIIString();
-                        encodedFile = URLEncoder.encode(encodedFile, StandardCharsets.UTF_8.toString());
+                        String encodedFile = fixEncoding(file.toUri().toString());
                         folder.addFile(encodedFile);
                     }
                 }
@@ -89,6 +86,15 @@ public class FileService {
         folder.setFiles(sortedFiles);
 
         return folder;
+    }
+
+    private String fixEncoding(String s) {
+        int i = s.indexOf('+');
+        while(i > -1) {
+            s = s.substring(0, i) + "%2B" + s.substring(i+1);
+            i = s.indexOf('+');
+        }
+        return s;
     }
 
 }
