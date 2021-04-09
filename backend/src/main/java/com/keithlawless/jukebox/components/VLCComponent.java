@@ -1,9 +1,11 @@
 package com.keithlawless.jukebox.components;
 
+import com.google.common.net.UrlEscapers;
 import com.keithlawless.jukebox.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.keithlawless.jukebox.entity.MediaMeta;
+import org.yaml.snakeyaml.util.UriEncoder;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -12,6 +14,10 @@ import uk.co.caprica.vlcj.player.base.State;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 @Component
@@ -58,7 +64,9 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
             return;
         }
 
-        mediaPlayer.media().play(mediaResourceLocator);
+        URI uri = URI.create(UrlEscapers.urlFragmentEscaper().escape(mediaResourceLocator));
+        logger.info("In VLCComponent, playing: " + uri.toString());
+        mediaPlayer.media().play(uri.toString());
 
     }
 
@@ -263,9 +271,15 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
     @Override
     public void mediaParsedChanged(Media media, MediaParsedStatus newStatus) {
         if(newStatus == MediaParsedStatus.DONE) {
-            MediaMeta mediaMeta = tagService.readTags(media.info().mrl());
-            mediaMeta.setDuration(media.info().duration());
-            appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
+            try {
+                String mrl = URLDecoder.decode(media.info().mrl(), StandardCharsets.UTF_8.name());
+                MediaMeta mediaMeta = tagService.readTags(mrl);
+                mediaMeta.setDuration(media.info().duration());
+                appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
+            }
+            catch(UnsupportedEncodingException e) {
+                logger.info("UnsupportedEncodingException caught: " + e.toString());
+            }
         }
     }
 

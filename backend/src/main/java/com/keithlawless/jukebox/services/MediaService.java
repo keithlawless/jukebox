@@ -46,6 +46,7 @@ public class MediaService {
     public synchronized MusicResourceLocator playNext() {
         MusicResourceLocator mrl = songQueue.poll();
         if(mrl != null) {
+            logger.info("Next song is: " + mrl.getMrl());
             play(mrl);
         }
         else {
