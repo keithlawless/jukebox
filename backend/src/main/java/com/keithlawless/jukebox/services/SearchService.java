@@ -5,13 +5,20 @@ import com.keithlawless.jukebox.entity.Folder;
 import com.keithlawless.jukebox.entity.MediaMeta;
 import com.keithlawless.jukebox.enums.IndexState;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.document.*;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +32,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 @Service
@@ -96,13 +106,16 @@ public class SearchService {
 
                 Document document = new Document();
 
-                Field artistField = new StringField("artist", mediaMeta.getArtist(), Field.Store.YES);
+                Field mrlField = new StringField( "mrl", mediaMeta.getMrl(), Field.Store.YES);
+                document.add(mrlField);
+
+                Field artistField = new TextField("artist", mediaMeta.getArtist(), Field.Store.YES);
                 document.add(artistField);
 
-                Field albumField = new StringField("album", mediaMeta.getAlbum(), Field.Store.YES);
+                Field albumField = new TextField("album", mediaMeta.getAlbum(), Field.Store.YES);
                 document.add(albumField);
 
-                Field titleField = new StringField("title", mediaMeta.getTitle(), Field.Store.YES);
+                Field titleField = new TextField("title", mediaMeta.getTitle(), Field.Store.YES);
                 document.add(titleField);
 
                 indexWriter.addDocument(document);
@@ -114,5 +127,48 @@ public class SearchService {
                 logger.info("IOException when adding document to index: " + ioe.toString());
             }
         }
+    }
+
+    public List<MediaMeta> query(String term) {
+        Vector<MediaMeta> resultList = new Vector<MediaMeta>();
+
+        try {
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
+            IndexSearcher searcher = new IndexSearcher(reader);
+            Analyzer analyzer = new StandardAnalyzer();
+            QueryParser parser = new QueryParser("title", analyzer);
+
+            String queryTerms = "artist:\"" + term + "\" " +
+                    "album:\"" + term + "\" " +
+                    "title:\"" + term + "\"";
+
+            Query query = parser.parse(queryTerms);
+            TopDocs topDocs = searcher.search(query, 101);
+            ScoreDoc[] hits = topDocs.scoreDocs;
+
+            logger.info("Result count: "  + hits.length);
+
+            for(ScoreDoc hit : hits) {
+                Document doc = searcher.doc(hit.doc);
+
+                MediaMeta mediaMeta = new MediaMeta();
+                mediaMeta.setMrl(doc.get("mrl"));
+                mediaMeta.setArtist(doc.get("artist"));
+                mediaMeta.setAlbum(doc.get("album"));
+                mediaMeta.setTitle(doc.get("title"));
+
+                resultList.add(mediaMeta);
+
+            }
+
+        }
+        catch(IOException ioe) {
+            logger.info("IOException when querying Lucene: " + ioe.toString());
+        }
+        catch(ParseException pe) {
+            logger.info("ParseException when querying Lucene: " + pe.toString());
+        }
+
+        return resultList;
     }
 }
