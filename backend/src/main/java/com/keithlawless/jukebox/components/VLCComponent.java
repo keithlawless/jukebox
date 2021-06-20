@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
@@ -36,43 +37,43 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
 
     @PostConstruct
     public void init() {
-        logger.info("Initializing VLCComponent...");
+        logger.log(Level.FINE, () -> "Initializing VLCComponent...");
 
         mediaPlayerFactory = new MediaPlayerFactory("--aout", "alsa");
-        logger.info("VLC found at path: " + mediaPlayerFactory.nativeLibraryPath());
+        logger.log(Level.FINE, () -> "VLC found at path: " + mediaPlayerFactory.nativeLibraryPath());
 
         mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
         mediaPlayer.events().addMediaPlayerEventListener(this);
         mediaPlayer.events().addMediaEventListener(this);
-        logger.info("MediaPlayer created...");
+        logger.log(Level.FINE, () -> "MediaPlayer created...");
 
-        logger.info("VLComponent initialization completed...");
+        logger.log(Level.FINE, () -> "VLComponent initialization completed...");
     }
 
     @PreDestroy
     public void cleanup() {
-        logger.info("Cleaning up VLCComponent...");
+        logger.log(Level.FINE, () -> "Cleaning up VLCComponent...");
         if(mediaPlayerFactory != null) {
             mediaPlayerFactory.release();
         }
-        logger.info("VLCComponent cleanup completed...");
+        logger.log(Level.FINE, () -> "VLCComponent cleanup completed...");
     }
 
     public void play(String mediaResourceLocator) {
         if(mediaPlayer == null) {
-            logger.info("No media player found when attempting to PLAY media?");
+            logger.log(Level.SEVERE, () -> "No media player found when attempting to PLAY media?");
             return;
         }
 
         URI uri = URI.create(UrlEscapers.urlFragmentEscaper().escape(mediaResourceLocator));
-        logger.info("In VLCComponent, playing: " + uri.toString());
+        logger.log(Level.FINER, () -> "In VLCComponent, playing: " + uri.toString());
         mediaPlayer.media().play(uri.toString());
 
     }
 
     public void pause() {
         if(mediaPlayer == null) {
-            logger.info("No media player found when attempting to PAUSE media?");
+            logger.log(Level.SEVERE, () -> "No media player found when attempting to PAUSE media?");
             return;
         }
 
@@ -82,7 +83,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
 
     public void play() {
         if(mediaPlayer == null) {
-            logger.info("No media player found when attempting to PLAY media?");
+            logger.log(Level.SEVERE, () -> "No media player found when attempting to PLAY media?");
             return;
         }
 
@@ -92,7 +93,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
 
     public void start() {
         if(mediaPlayer == null) {
-            logger.info("No media player found when attempting to START media?");
+            logger.log(Level.SEVERE, () -> "No media player found when attempting to START media?");
             return;
         }
 
@@ -102,7 +103,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
 
     public void stop() {
         if(mediaPlayer == null) {
-            logger.info("No media player found when attempting to STOP media?");
+            logger.log(Level.SEVERE, () -> "No media player found when attempting to STOP media?");
             return;
         }
 
@@ -278,7 +279,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
                 appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
             }
             catch(UnsupportedEncodingException e) {
-                logger.info("UnsupportedEncodingException caught: " + e.toString());
+                logger.log(Level.SEVERE, () -> "UnsupportedEncodingException caught: " + e.toString());
             }
         }
     }

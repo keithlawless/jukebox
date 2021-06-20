@@ -28,6 +28,11 @@ public class SongQueue {
         return queue.poll();
     }
 
+    // Drain the queue.
+    public synchronized void drain() {
+        queue.clear();
+    }
+
     public int size() {
         return queue.size();
     }

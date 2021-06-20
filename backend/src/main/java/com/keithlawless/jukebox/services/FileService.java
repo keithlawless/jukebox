@@ -12,6 +12,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,11 +47,11 @@ public class FileService {
             path = Paths.get(new URI(dir));
         }
         catch(URISyntaxException e) {
-            logger.info("Invalid URI.");
+            logger.log(Level.ALL, () -> "Error: Invalid URI.");
             return folder;
         }
         catch(java.nio.file.InvalidPathException e) {
-            logger.info("Invalid Path.");
+            logger.log(Level.ALL, () -> "Error: Invalid Path.");
             return folder;
         }
 
@@ -72,7 +73,7 @@ public class FileService {
         } catch (IOException | DirectoryIteratorException x) {
             // IOException can never be thrown by the iteration.
             // In this snippet, it can only be thrown by newDirectoryStream.
-            logger.info("Exception caught in getFolder(): " + x.toString());
+            logger.log(Level.ALL, () -> "Exception caught in getFolder(): " + x.toString());
         }
 
         // Sort the lists before returning.

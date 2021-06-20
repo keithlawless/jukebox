@@ -43,6 +43,15 @@ public class MediaService {
         return musicResourceLocator;
     }
 
+    public synchronized void drainQueue() {
+        if(nowPlaying != null) {
+            stop();
+        }
+
+        songQueue.drain();
+        mediaMeta = null;
+    }
+
     public synchronized MusicResourceLocator playNext() {
         MusicResourceLocator mrl = songQueue.poll();
         if(mrl != null) {

@@ -47,4 +47,7 @@ public class SongQueueController  {
     public MetaList list() {
         return mediaService.getMetaList();
     }
+
+    @PostMapping("/empty")
+    public void empty() { mediaService.drainQueue(); }
 }
