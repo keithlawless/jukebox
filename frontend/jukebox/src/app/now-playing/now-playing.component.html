@@ -25,6 +25,7 @@
             <button type="button" class="btn btn-secondary" disabled>Playing</button>
             <button type="button" class="btn btn-secondary" (click)="pause()">Pause</button>
             <button type="button" class="btn btn-secondary" (click)="stop()">Stop</button>
+            <button type="button" class="btn btn-secondary" (click)="empty()">Empty Queue</button>
           </div>
           <div *ngIf="depth > 0" class="btn-group btn-group-lg mr-2" role="group">
             <button type="button" class="btn btn-secondary" (click)="next()">Next Song</button>
@@ -34,11 +35,13 @@
           <button type="button" class="btn btn-secondary" (click)="resume()">Resume</button>
           <button type="button" class="btn btn-secondary" disabled>Paused</button>
           <button type="button" class="btn btn-secondary" (click)="stop()">Stop</button>
+          <button type="button" class="btn btn-secondary" (click)="empty()">Empty Queue</button>
         </div>
         <div *ngIf="isStopped()" class="btn-group btn-group-lg" role="group">
           <button type="button" class="btn btn-secondary" (click)="resume()">Play</button>
           <button type="button" class="btn btn-secondary" (click)="pause()">Pause</button>
           <button type="button" class="btn btn-secondary" disabled>Stopped</button>
+          <button type="button" class="btn btn-secondary" (click)="empty()">Empty Queue</button>
         </div>
       </div>
     </div>

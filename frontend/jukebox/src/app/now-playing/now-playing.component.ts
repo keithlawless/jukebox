@@ -84,6 +84,13 @@ export class NowPlayingComponent implements OnInit {
       });
   }
 
+  empty(): void {
+    this.songQueueService.empty()
+      .subscribe( ret => {
+        // No action needed.
+      });
+  }
+
   isRadio(): boolean {
     return !this.nowPlaying.mrl.startsWith('file');
   }

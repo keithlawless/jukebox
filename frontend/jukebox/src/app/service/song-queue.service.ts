@@ -44,4 +44,8 @@ export class SongQueueService implements OnDestroy {
     return this.http.post<string[]>('/api/queue/addmany', mrlList);
   }
 
+  empty(): Observable<any> {
+    return this.http.post('/api/queue/empty', {});
+  }
+
 }
