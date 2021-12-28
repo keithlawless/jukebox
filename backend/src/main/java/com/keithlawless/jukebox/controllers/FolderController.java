@@ -17,6 +17,7 @@ public class FolderController {
 
     @GetMapping("/list")
     public Folder list(@RequestParam(required = false) String entryPoint) {
+        System.out.println("Requested entry point is: " + entryPoint);
         return fileService.getFolder(entryPoint);
     }
 }

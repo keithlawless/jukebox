@@ -95,6 +95,11 @@ public class FileService {
             s = s.substring(0, i) + "%2B" + s.substring(i+1);
             i = s.indexOf('+');
         }
+        i = s.indexOf('&');
+        while( i > -1) {
+            s = s.substring(0, i) + "%26" + s.substring(i+1);
+            i = s.indexOf('&');
+        }
         return s;
     }
 
