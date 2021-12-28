@@ -115,6 +115,12 @@ public class MediaService {
         vlcComponent.stop();
     }
 
+    public void stopInternetRadio() {
+        System.out.println("In stopInterenetRadio()");
+        vlcComponent.stop();
+        playNext();
+    }
+
     public MetaList getMetaList() {
         MetaList metaList = new MetaList();
         metaList.setSize(songQueue.size());

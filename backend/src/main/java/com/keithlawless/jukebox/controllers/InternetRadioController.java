@@ -25,7 +25,7 @@ public class InternetRadioController {
 
     @GetMapping("/stop")
     public void stop() {
-        mediaService.stop();
+        mediaService.stopInternetRadio();
     }
 
     @GetMapping("/list")
