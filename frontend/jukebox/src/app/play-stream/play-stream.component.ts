@@ -45,7 +45,7 @@ export class PlayStreamComponent implements OnInit {
   }
 
   stop(): void {
-    this.nowPlayingService.stop()
+    this.playStreamService.stop()
       .subscribe( ret => {
         // No action needed.
       });

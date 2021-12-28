@@ -21,4 +21,8 @@ export class PlayStreamService {
     return this.http.get<RadioStations>('/api/radio/list');
   }
 
+  stop(): Observable<any> {
+    return this.http.get('/api/radio/stop');
+  }
+
 }
