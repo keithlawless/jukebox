@@ -2,19 +2,17 @@ package com.keithlawless.jukebox.components;
 
 import com.google.common.net.UrlEscapers;
 import com.keithlawless.jukebox.services.TagService;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.keithlawless.jukebox.entity.MediaMeta;
-import org.yaml.snakeyaml.util.UriEncoder;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventListener;
 import uk.co.caprica.vlcj.player.base.State;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
-public class VLCComponent implements MediaPlayerEventListener, MediaEventListener {
+public class VLCComponent implements MediaPlayerEventListener, MediaEventListener, InitializingBean, DisposableBean {
 
     private static final Logger logger = Logger.getLogger(VLCComponent.class.getName());
 
@@ -35,8 +33,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
     private MediaPlayerFactory mediaPlayerFactory;
     private MediaPlayer mediaPlayer;
 
-    @PostConstruct
-    public void init() {
+    public void afterPropertiesSet() {
         logger.log(Level.FINE, () -> "Initializing VLCComponent...");
 
         mediaPlayerFactory = new MediaPlayerFactory("--aout", "alsa");
@@ -50,8 +47,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
         logger.log(Level.FINE, () -> "VLComponent initialization completed...");
     }
 
-    @PreDestroy
-    public void cleanup() {
+    public void destroy() {
         logger.log(Level.FINE, () -> "Cleaning up VLCComponent...");
         if(mediaPlayerFactory != null) {
             mediaPlayerFactory.release();
@@ -66,7 +62,7 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
         }
 
         URI uri = URI.create(UrlEscapers.urlFragmentEscaper().escape(mediaResourceLocator));
-        logger.log(Level.FINER, () -> "In VLCComponent, playing: " + uri.toString());
+        logger.log(Level.FINER, () -> "In VLCComponent, playing: " + uri);
         mediaPlayer.media().play(uri.toString());
 
     }
@@ -272,15 +268,10 @@ public class VLCComponent implements MediaPlayerEventListener, MediaEventListene
     @Override
     public void mediaParsedChanged(Media media, MediaParsedStatus newStatus) {
         if(newStatus == MediaParsedStatus.DONE) {
-            try {
-                String mrl = URLDecoder.decode(media.info().mrl(), StandardCharsets.UTF_8.name());
-                MediaMeta mediaMeta = tagService.readTags(mrl);
-                mediaMeta.setDuration(media.info().duration());
-                appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
-            }
-            catch(UnsupportedEncodingException e) {
-                logger.log(Level.SEVERE, () -> "UnsupportedEncodingException caught: " + e.toString());
-            }
+            String mrl = URLDecoder.decode(media.info().mrl(), StandardCharsets.UTF_8);
+            MediaMeta mediaMeta = tagService.readTags(mrl);
+            mediaMeta.setDuration(media.info().duration());
+            appMediaEventPublisher.publishMediaMetaEvent(mediaMeta);
         }
     }
 

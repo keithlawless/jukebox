@@ -1,9 +1,7 @@
 package com.keithlawless.jukebox.services;
 
-import com.keithlawless.jukebox.entity.Artwork;
 import com.keithlawless.jukebox.entity.Folder;
 import com.keithlawless.jukebox.entity.MediaMeta;
-import com.keithlawless.jukebox.enums.IndexState;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
@@ -19,11 +17,11 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,7 +32,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 @Service
-public class SearchService {
+public class SearchService implements InitializingBean {
 
     private static final Logger logger = Logger.getLogger(SearchService.class.getName());
 
@@ -50,12 +48,9 @@ public class SearchService {
     @Autowired
     private TagService tagService;
 
-    private IndexState indexState = IndexState.NONE;
 
-    @PostConstruct
-    public void init() {
+    public void afterPropertiesSet() {
         logger.info("Building Search Index...");
-        indexState = IndexState.INDEXING;
         index();
         logger.info("Search Index Ready...");
     }
@@ -73,11 +68,9 @@ public class SearchService {
             indexFolder(baseDir, indexWriter);
 
             indexWriter.close();
-            indexState = IndexState.READY;
         }
         catch( IOException ioe ) {
-            logger.info("IOException caught: " + ioe.toString());
-            indexState = IndexState.ERROR;
+            logger.info("IOException caught: " + ioe);
         }
     }
 
@@ -85,18 +78,13 @@ public class SearchService {
         Folder folder = fileService.getFolder(entryPoint);
 
         for(String f: folder.getFolders()) {
-            try {
-                String url = URLDecoder.decode(f, StandardCharsets.UTF_8.toString());
-                indexFolder(url, indexWriter);
-            }
-            catch(UnsupportedEncodingException e) {
-                logger.info("UnsupportedEncodingException caught: " + e.toString());
-            }
+            String url = URLDecoder.decode(f, StandardCharsets.UTF_8);
+            indexFolder(url, indexWriter);
         }
 
         for(String f: folder.getFiles()) {
             try {
-                String url = URLDecoder.decode(f, StandardCharsets.UTF_8.name());
+                String url = URLDecoder.decode(f, StandardCharsets.UTF_8);
 
                 MediaMeta mediaMeta = tagService.readTags(url);
 
@@ -117,16 +105,16 @@ public class SearchService {
                 indexWriter.addDocument(document);
             }
             catch(UnsupportedEncodingException e ) {
-                logger.info("UnsupportedEncodingException caught: " + e.toString());
+                logger.info("UnsupportedEncodingException caught: " + e);
             }
             catch(IOException ioe) {
-                logger.info("IOException when adding document to index: " + ioe.toString());
+                logger.info("IOException when adding document to index: " + ioe);
             }
         }
     }
 
     public List<MediaMeta> query(String term) {
-        Vector<MediaMeta> resultList = new Vector<MediaMeta>();
+        Vector<MediaMeta> resultList = new Vector<>();
 
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
@@ -156,10 +144,10 @@ public class SearchService {
 
         }
         catch(IOException ioe) {
-            logger.info("IOException when querying Lucene: " + ioe.toString());
+            logger.info("IOException when querying Lucene: " + ioe);
         }
         catch(ParseException pe) {
-            logger.info("ParseException when querying Lucene: " + pe.toString());
+            logger.info("ParseException when querying Lucene: " + pe);
         }
 
         return resultList;
