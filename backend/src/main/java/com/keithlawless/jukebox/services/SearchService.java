@@ -5,10 +5,7 @@ import com.keithlawless.jukebox.entity.MediaMeta;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -18,7 +15,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,12 +38,13 @@ public class SearchService implements InitializingBean {
     @Value("${com.keithlawless.jukebox.search.index.location}")
     private String indexPath;
 
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
+    private final TagService tagService;
 
-    @Autowired
-    private TagService tagService;
-
+    public SearchService(FileService fileService, TagService tagService) {
+        this.fileService = fileService;
+        this.tagService = tagService;
+    }
 
     public void afterPropertiesSet() {
         logger.info("Building Search Index...");
@@ -127,11 +124,11 @@ public class SearchService implements InitializingBean {
                     "title:\"" + term + "\"";
 
             Query query = parser.parse(queryTerms);
-            TopDocs topDocs = searcher.search(query, 101);
-            ScoreDoc[] hits = topDocs.scoreDocs;
 
-            for(ScoreDoc hit : hits) {
-                Document doc = searcher.doc(hit.doc);
+            TopDocs hits = searcher. search(query, 10);
+            StoredFields storedFields = searcher. storedFields();
+            for (ScoreDoc hit : hits.scoreDocs) {
+                Document doc = storedFields. document(hit. doc);
 
                 MediaMeta mediaMeta = new MediaMeta();
                 mediaMeta.setMrl(doc.get("mrl"));
@@ -141,7 +138,6 @@ public class SearchService implements InitializingBean {
 
                 resultList.add(mediaMeta);
             }
-
         }
         catch(IOException ioe) {
             logger.info("IOException when querying Lucene: " + ioe);
