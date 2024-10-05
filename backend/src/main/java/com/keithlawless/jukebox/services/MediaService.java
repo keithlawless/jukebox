@@ -34,8 +34,8 @@ public class MediaService {
     private PlayState playState = null;
 
     public synchronized MusicResourceLocator addToPlayQueue(MusicResourceLocator musicResourceLocator) {
-        int size = songQueue.add(musicResourceLocator);
-        if(nowPlaying == null) {
+        songQueue.add(musicResourceLocator);
+        if(mediaMeta == null) {
             if(autoPlay) {
                 playNext();
             }

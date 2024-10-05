@@ -3,15 +3,15 @@
     <h3>Now Playing</h3>
     <div class="row">
       <div class="col-12 col-lg-4">
-        <img *ngIf="nowPlaying.mrl != null && nowPlaying.mrl.length > 0" height="300" width="300" src="{{imageURL(nowPlaying.mrl)}}">
+        <img alt="Cover art for playing song" *ngIf="nowPlaying.mrl != null && nowPlaying.mrl.length > 0" height="300" width="300" src="{{imageURL(nowPlaying.mrl)}}">
       </div>
       <div class="col-12 col-lg-8">
-        <ul *ngIf="isRadio() == false" class="song-text">
+        <ul *ngIf="!isRadio()" class="song-text">
           <li><b>Song:</b> {{nowPlaying.title}}</li>
           <li><b>Artist:</b> {{nowPlaying.artist}}</li>
           <li><b>Album:</b> {{nowPlaying.album}}</li>
         </ul>
-        <div *ngIf="isRadio() == false" class="progress">
+        <div *ngIf="!isRadio()" class="progress">
           <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                [attr.aria-valuenow]="nowPlaying.elapsedTime" [attr.style]="formatProgress()"
                [attr.aria-valuemax]="nowPlaying.duration">{{formatElapsed()}} / {{formatDuration()}}</div>
@@ -39,7 +39,6 @@
         </div>
         <div *ngIf="isStopped()" class="btn-group btn-group-lg" role="group">
           <button type="button" class="btn btn-secondary" (click)="resume()">Play</button>
-          <button type="button" class="btn btn-secondary" (click)="pause()">Pause</button>
           <button type="button" class="btn btn-secondary" disabled>Stopped</button>
           <button type="button" class="btn btn-secondary" (click)="empty()">Empty Queue</button>
         </div>
