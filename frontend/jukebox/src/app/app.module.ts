@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,24 +13,17 @@ import { FooterComponent } from './footer/footer.component';
 import { PlayStreamComponent } from './play-stream/play-stream.component';
 import { SearchComponent } from './search/search.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    ActionBarComponent,
-    NowPlayingComponent,
-    SongQueueComponent,
-    HomeComponent,
-    AddSongsComponent,
-    FooterComponent,
-    PlayStreamComponent,
-    SearchComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        ActionBarComponent,
+        NowPlayingComponent,
+        SongQueueComponent,
+        HomeComponent,
+        AddSongsComponent,
+        FooterComponent,
+        PlayStreamComponent,
+        SearchComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }

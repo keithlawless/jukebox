@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, timer, Subject } from 'rxjs';
 import { switchMap, share, retry, takeUntil } from 'rxjs/operators';
 import {MetaList} from '../entity/MetaList';

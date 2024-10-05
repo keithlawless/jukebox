@@ -1,7 +1,7 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {Observable, of, pipe, Subject, timer} from 'rxjs';
+import {Observable, Subject, timer} from 'rxjs';
 import {MediaMeta} from '../entity/MediaMeta';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {retry, share, switchMap, takeUntil} from 'rxjs/operators';
 import {MusicResourceLocator} from '../entity/MusicResourceLocator';
 

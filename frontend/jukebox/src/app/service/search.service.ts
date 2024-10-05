@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {MediaMeta} from '../entity/MediaMeta';
 import {Observable} from 'rxjs';
-import {MetaList} from '../entity/MetaList';
 
 @Injectable({
   providedIn: 'root'
