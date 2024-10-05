@@ -81,19 +81,19 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "jukebox:build",
-            "proxyConfig": "src/proxy.conf.json"
+            "proxyConfig": "src/proxy.conf.json",
+            "buildTarget": "jukebox:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "jukebox:build:production"
+              "buildTarget": "jukebox:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "jukebox:build"
+            "buildTarget": "jukebox:build"
           }
         },
         "test": {
