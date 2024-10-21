@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="3558ca4b-2eb8-4597-af5b-c2c89d8d1346" name="Jukebox" url="http://192.168.4.199">
+        <fileTransfer rootFolder="/home/keith" accessType="SFTP" host="192.168.4.199" port="22" sshConfigId="28c277e1-20d3-488d-86b1-5454d4ac5913" sshConfig="keith@192.168.4.199:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
