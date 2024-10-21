@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="Jukebox" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Jukebox">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/stage/opt/bootapps/jukebox/libs" local="$PROJECT_DIR$/backend/build/libs" web="/" />
+            <mapping deploy="/stage/var/www/html" local="$PROJECT_DIR$/frontend/jukebox/dist/jukebox/browser" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

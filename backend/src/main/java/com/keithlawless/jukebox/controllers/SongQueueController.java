@@ -25,6 +25,7 @@ public class SongQueueController  {
     @PostMapping("/addmany")
     public Integer addmany(@RequestBody String[] songList) {
         for(String song: songList) {
+            logger.info("Adding song " + song);
             MusicResourceLocator mrl = new MusicResourceLocator();
             mrl.setMrl(song);
             mediaService.addToPlayQueue(mrl);
@@ -34,13 +35,7 @@ public class SongQueueController  {
 
     @GetMapping("/playing")
     public MediaMeta playing() {
-        MediaMeta mediaMeta = mediaService.getMeta();
-        if(mediaMeta == null) {
-            return null;
-        }
-        else {
-            return mediaMeta;
-        }
+        return mediaService.getMeta();
     }
 
     @GetMapping("/list")

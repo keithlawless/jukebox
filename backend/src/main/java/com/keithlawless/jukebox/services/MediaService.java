@@ -38,6 +38,7 @@ public class MediaService {
         if(mediaMeta == null) {
             if(autoPlay) {
                 playNext();
+                mediaMeta = tagService.readTags(musicResourceLocator.getMrl());
             }
         }
         return musicResourceLocator;
