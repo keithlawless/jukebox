@@ -9,6 +9,14 @@ import com.keithlawless.jukebox.services.MediaService;
 
 import java.util.logging.Logger;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/queue")
 public class SongQueueController  {
@@ -44,5 +52,9 @@ public class SongQueueController  {
     }
 
     @PostMapping("/empty")
+    @Operation(summary = "Empty the queue",
+               description = "Removes all songs from the playback queue")
+    @ApiResponse(responseCode = "200", 
+                description = "Queue emptied successfully")
     public void empty() { mediaService.drainQueue(); }
 }

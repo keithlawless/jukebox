@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.keithlawless.jukebox.entity.Artwork;
 import com.keithlawless.jukebox.services.ImageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import java.util.logging.Logger;
 
@@ -21,7 +25,18 @@ public class ImageController {
     private ImageService imageService;
 
     @GetMapping("/fetch")
-    public ResponseEntity<byte[]> fetch(@RequestParam(required = true) String mrl) {
+    @Operation(summary = "Fetch artwork image",
+               description = "Retrieves an artwork image for the specified media resource location (MRL)")
+    @ApiResponse(responseCode = "200", 
+                description = "Successfully retrieved artwork image",
+                content = @Content(mediaType = "image/*"))
+    @ApiResponse(responseCode = "404", 
+                description = "Artwork not found for the specified MRL")
+    public ResponseEntity<byte[]> fetch(
+            @Parameter(description = "Media Resource Location (MRL) of the media file", 
+                      required = true,
+                      example = "file:///music/album/track.mp3")
+            @RequestParam(required = true) String mrl) {
         HttpHeaders headers = new HttpHeaders();
         headers.setCacheControl(CacheControl.noCache().getHeaderValue());
 
