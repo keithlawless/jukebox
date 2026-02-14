@@ -2,9 +2,7 @@ package com.keithlawless.jukebox.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.keithlawless.jukebox.entity.Folder;
 import com.keithlawless.jukebox.services.FileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/folder")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET})
 @Tag(name = "Folder Controller", description = "APIs for browsing and managing folder structures")
 public class FolderController {
 
