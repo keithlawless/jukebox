@@ -5,11 +5,11 @@ plugins {
 }
 
 group = 'com.keithlawless'
-version = '2.0.0'
+version = '2.0.1'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -33,4 +33,12 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+processResources {
+	filesMatching('application.properties') {
+		filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+			'project.version': version
+		]
+	}
 }

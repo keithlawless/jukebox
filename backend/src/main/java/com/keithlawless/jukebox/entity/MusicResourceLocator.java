@@ -39,12 +39,13 @@ public class MusicResourceLocator implements Serializable {
 class UrlDecodedStringDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws java.io.IOException {
-        String value = p.getValueAsString();
-        if (value == null) {
-            return null;
+        String value = p.getText();
+        if (value == null || value.isEmpty()) {
+            return value;
         }
         try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8);
+            String decoded = URLDecoder.decode(value, StandardCharsets.UTF_8);
+            return decoded.equals(value) ? value : decoded;
         } catch (Exception e) {
             return value;
         }

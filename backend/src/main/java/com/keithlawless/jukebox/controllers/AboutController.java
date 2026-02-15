@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class AboutController {
     private static final Logger logger = Logger.getLogger(AboutController.class.getName());
 
-    @Value("${project.version}")
+    @Value("${app.version}")
     private String version;
 
     @GetMapping("/version")
