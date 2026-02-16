@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.keithlawless'
-version = '2.0.1'
+version = '2.1.0'
 
 java {
     toolchain {
@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.apache.lucene:lucene-core:9.12.0'
 	implementation 'org.apache.lucene:lucene-analyzers-common:8.11.4'
 	implementation 'org.apache.lucene:lucene-queryparser:9.12.0'
+	implementation 'org.apache.commons:commons-lang3:3.18.0'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -37,7 +38,7 @@ test {
 
 processResources {
 	filesMatching('application.properties') {
-		filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+		filter ReplaceTokens, tokens: [
 			'project.version': version
 		]
 	}

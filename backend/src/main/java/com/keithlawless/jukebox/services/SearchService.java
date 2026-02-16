@@ -14,8 +14,10 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,14 +25,20 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 @Service
-public class SearchService implements InitializingBean {
+public class SearchService {
 
     private static final Logger logger = Logger.getLogger(SearchService.class.getName());
+
+    private static final String TITLE_FIELD = "title";
+    private static final String ALBUM_FIELD = "album";
+    private static final String ARTIST_FIELD = "artist";
+    private static final String MRL_FIELD = "mrl";
 
     @Value("${com.keithlawless.jukebox.basedir}")
     private String baseDir;
@@ -40,21 +48,39 @@ public class SearchService implements InitializingBean {
 
     private final FileService fileService;
     private final TagService tagService;
+    
+    private volatile boolean indexReady = false;
+    private volatile boolean indexing = false;
 
     public SearchService(FileService fileService, TagService tagService) {
         this.fileService = fileService;
         this.tagService = tagService;
     }
 
-    public void afterPropertiesSet() {
-        logger.info("Building Search Index...");
-        index();
-        logger.info("Search Index Ready...");
+    @EventListener(ApplicationReadyEvent.class)
+    @Async
+    public void buildIndexAsync() {
+        logger.log(Level.INFO, "Building Search Index asynchronously...");
+        indexing = true;
+        try {
+            index();
+            indexReady = true;
+            logger.log(Level.INFO, "Search Index Ready...");
+        } finally {
+            indexing = false;
+        }
+    }
+    
+    public boolean isIndexReady() {
+        return indexReady;
+    }
+    
+    public boolean isIndexing() {
+        return indexing;
     }
 
     private void index() {
-        try {
-            Directory dir = FSDirectory.open(Paths.get(indexPath));
+        try (Directory dir = FSDirectory.open(Paths.get(indexPath))) {
             Analyzer analyzer = new StandardAnalyzer();
             IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -87,16 +113,16 @@ public class SearchService implements InitializingBean {
 
                 Document document = new Document();
 
-                Field mrlField = new StringField( "mrl", mediaMeta.getMrl(), Field.Store.YES);
+                Field mrlField = new StringField( MRL_FIELD, mediaMeta.getMrl(), Field.Store.YES);
                 document.add(mrlField);
 
-                Field artistField = new TextField("artist", mediaMeta.getArtist(), Field.Store.YES);
+                Field artistField = new TextField(ARTIST_FIELD, mediaMeta.getArtist(), Field.Store.YES);
                 document.add(artistField);
 
-                Field albumField = new TextField("album", mediaMeta.getAlbum(), Field.Store.YES);
+                Field albumField = new TextField(ALBUM_FIELD, mediaMeta.getAlbum(), Field.Store.YES);
                 document.add(albumField);
 
-                Field titleField = new TextField("title", mediaMeta.getTitle(), Field.Store.YES);
+                Field titleField = new TextField(TITLE_FIELD, mediaMeta.getTitle(), Field.Store.YES);
                 document.add(titleField);
 
                 indexWriter.addDocument(document);
@@ -111,13 +137,13 @@ public class SearchService implements InitializingBean {
     }
 
     public List<MediaMeta> query(String term) {
-        Vector<MediaMeta> resultList = new Vector<>();
+        List<MediaMeta> resultList = new ArrayList<>();
 
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
             IndexSearcher searcher = new IndexSearcher(reader);
             Analyzer analyzer = new StandardAnalyzer();
-            QueryParser parser = new QueryParser("title", analyzer);
+            QueryParser parser = new QueryParser(TITLE_FIELD, analyzer);
 
             String queryTerms = "artist:\"" + term + "\" " +
                     "album:\"" + term + "\" " +
@@ -131,10 +157,10 @@ public class SearchService implements InitializingBean {
                 Document doc = storedFields. document(hit. doc);
 
                 MediaMeta mediaMeta = new MediaMeta();
-                mediaMeta.setMrl(doc.get("mrl"));
-                mediaMeta.setArtist(doc.get("artist"));
-                mediaMeta.setAlbum(doc.get("album"));
-                mediaMeta.setTitle(doc.get("title"));
+                mediaMeta.setMrl(doc.get(MRL_FIELD));
+                mediaMeta.setArtist(doc.get(ARTIST_FIELD));
+                mediaMeta.setAlbum(doc.get(ALBUM_FIELD));
+                mediaMeta.setTitle(doc.get(TITLE_FIELD));
 
                 resultList.add(mediaMeta);
             }
