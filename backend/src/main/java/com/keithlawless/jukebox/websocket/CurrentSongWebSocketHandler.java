@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -28,14 +29,14 @@ public class CurrentSongWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     private MediaService mediaService;
     
-    private volatile boolean broadcasterStarted = false;
+    private volatile ScheduledFuture<?> broadcastTask = null;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
         logger.info("WebSocket connection established. Total sessions: " + sessions.size());
         
-        if (!broadcasterStarted) {
+        if (broadcastTask == null) {
             startBroadcaster();
         }
     }
@@ -55,20 +56,19 @@ public class CurrentSongWebSocketHandler extends TextWebSocketHandler {
     }
 
     private synchronized void startBroadcaster() {
-        if (broadcasterStarted) {
+        if (broadcastTask != null) {
             return;
         }
-        broadcasterStarted = true;
-        executor.scheduleAtFixedRate(this::broadcastCurrentSong, 0, UPDATE_INTERVAL_MS, TimeUnit.MILLISECONDS);
+        broadcastTask = executor.scheduleAtFixedRate(this::broadcastCurrentSong, 0, UPDATE_INTERVAL_MS, TimeUnit.MILLISECONDS);
         logger.info("Song broadcaster started");
     }
 
     private synchronized void stopBroadcaster() {
-        if (!broadcasterStarted) {
+        if (broadcastTask == null) {
             return;
         }
-        broadcasterStarted = false;
-        executor.shutdownNow();
+        broadcastTask.cancel(false);
+        broadcastTask = null;
         logger.info("Song broadcaster stopped");
     }
 
