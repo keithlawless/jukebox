@@ -60,6 +60,9 @@ public class TagService {
         }
         catch(Exception e) {
             logger.info("Exception in readTags(): " + e.toString());
+            mediaMeta.setArtist("Unknown");
+            mediaMeta.setAlbum("Unknown");
+            mediaMeta.setTitle("Unknown");
         }
 
         return mediaMeta;
