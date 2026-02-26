@@ -7,6 +7,7 @@ import com.keithlawless.jukebox.entity.MetaList;
 import com.keithlawless.jukebox.entity.MusicResourceLocator;
 import com.keithlawless.jukebox.services.MediaService;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,14 +32,17 @@ public class SongQueueController  {
     }
 
     @PostMapping("/addmany")
-    public Integer addmany(@RequestBody String[] songList) {
+    public Integer addmany(@RequestBody List<String> songList) {
+        if (songList == null || songList.isEmpty()) {
+            return 0;
+        }
         for(String song: songList) {
             logger.info("Adding song " + song);
             MusicResourceLocator mrl = new MusicResourceLocator();
             mrl.setMrl(song);
             mediaService.addToPlayQueue(mrl);
         }
-        return songList.length;
+        return songList.size();
     }
 
     @GetMapping("/playing")
