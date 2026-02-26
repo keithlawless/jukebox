@@ -38,6 +38,10 @@ public class MediaMeta implements Serializable {
             implementation = PlayState.class)
     private PlayState playState;
 
+    @Schema(description = "Track number of the media",
+            example = "1")
+    private String trackNumber;
+
     public String getMrl() {
         return mrl;
     }
@@ -93,4 +97,9 @@ public class MediaMeta implements Serializable {
     public void setPlayState(PlayState playState) {
         this.playState = playState;
     }
+
+    public String getTrackNumber() { return trackNumber; }
+
+    public void setTrackNumber(String trackNumber) { this.trackNumber = trackNumber; }
+
 }
