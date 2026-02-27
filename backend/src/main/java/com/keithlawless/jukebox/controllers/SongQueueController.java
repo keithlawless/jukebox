@@ -6,8 +6,11 @@ import com.keithlawless.jukebox.entity.MediaMeta;
 import com.keithlawless.jukebox.entity.MetaList;
 import com.keithlawless.jukebox.entity.MusicResourceLocator;
 import com.keithlawless.jukebox.services.MediaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,17 +35,38 @@ public class SongQueueController  {
     }
 
     @PostMapping("/addmany")
-    public Integer addmany(@RequestBody List<String> songList) {
-        if (songList == null || songList.isEmpty()) {
+    public Integer addmany(HttpServletRequest request) {
+        try {
+            String requestBody = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            logger.info("addmany() received requestBody: " + requestBody);
+            
+            if (requestBody == null || requestBody.trim().isEmpty()) {
+                logger.warning("requestBody is null or empty");
+                return 0;
+            }
+            
+            ObjectMapper mapper = new ObjectMapper();
+            String[] songList = mapper.readValue(requestBody, String[].class);
+            logger.info("Parsed " + songList.length + " songs from request");
+            
+            if (songList.length == 0) {
+                logger.warning("songList is empty after parsing");
+                return 0;
+            }
+            
+            logger.info("Processing " + songList.length + " songs");
+            for(String song: songList) {
+                logger.info("Adding song " + song);
+                MusicResourceLocator mrl = new MusicResourceLocator();
+                mrl.setMrl(song);
+                mediaService.addToPlayQueue(mrl);
+            }
+            return songList.length;
+        } catch (IOException e) {
+            logger.warning("Failed to read or parse request body: " + e.getMessage());
+            e.printStackTrace();
             return 0;
         }
-        for(String song: songList) {
-            logger.info("Adding song " + song);
-            MusicResourceLocator mrl = new MusicResourceLocator();
-            mrl.setMrl(song);
-            mediaService.addToPlayQueue(mrl);
-        }
-        return songList.size();
     }
 
     @GetMapping("/playing")

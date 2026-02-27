@@ -42,3 +42,7 @@ processResources {
 		expand project.properties
 	}
 }
+
+bootJar {
+	archiveFileName = 'jukebox-latest.jar'
+}
