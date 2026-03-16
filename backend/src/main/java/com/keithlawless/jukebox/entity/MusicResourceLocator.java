@@ -1,9 +1,24 @@
 package com.keithlawless.jukebox.entity;
 
-import java.io.Serializable;
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.io.Serializable;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+
+/**
+ * Represents a media resource location with its MRL (Media Resource Locator)
+ */
+@Schema(description = "Represents a media resource location with its MRL (Media Resource Locator)")
 public class MusicResourceLocator implements Serializable {
 
+    @Schema(description = "Media Resource Locator (MRL) string that identifies the media resource",
+            example = "file:///music/queen/bohemian_rhapsody.mp3")
+    @JsonDeserialize(using = UrlDecodedStringDeserializer.class)
     private String mrl;
 
     public MusicResourceLocator() {}
@@ -19,4 +34,20 @@ public class MusicResourceLocator implements Serializable {
         this.mrl = mrl;
     }
 
+}
+
+class UrlDecodedStringDeserializer extends JsonDeserializer<String> {
+    @Override
+    public String deserialize(JsonParser p, DeserializationContext ctxt) throws java.io.IOException {
+        String value = p.getText();
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+        try {
+            String decoded = URLDecoder.decode(value, StandardCharsets.UTF_8);
+            return decoded.equals(value) ? value : decoded;
+        } catch (Exception e) {
+            return value;
+        }
+    }
 }

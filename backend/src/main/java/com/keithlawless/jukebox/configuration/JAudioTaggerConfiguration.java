@@ -12,10 +12,17 @@ public class JAudioTaggerConfiguration {
     @EventListener(ContextRefreshedEvent.class)
     public void goEasyOnTheLogging() {
 
-        //Disable loggers
-        Logger[] pin = new Logger[]{ Logger.getLogger("org.jaudiotagger") };
-
-        for (Logger l : pin)
-            l.setLevel(Level.WARNING);
+        Logger jaudiotaggerLogger = Logger.getLogger("org.jaudiotagger");
+        jaudiotaggerLogger.setLevel(Level.WARNING);
+        
+        java.util.logging.LogManager logManager = java.util.logging.LogManager.getLogManager();
+        java.util.Enumeration<String> loggerNames = logManager.getLoggerNames();
+        while (loggerNames.hasMoreElements()) {
+            String loggerName = loggerNames.nextElement();
+            if (loggerName.startsWith("org.jaudiotagger")) {
+                Logger logger = Logger.getLogger(loggerName);
+                logger.setLevel(Level.WARNING);
+            }
+        }
     }
 }

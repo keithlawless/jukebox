@@ -11,11 +11,15 @@ import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 
 @Service
 public class FileService {
@@ -27,19 +31,55 @@ public class FileService {
     @Value("${com.keithlawless.jukebox.filefilter}")
     private String fileFilter;
 
+    private final Map<String, Folder> folderCache = new HashMap<>();
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initializeCache() {
+        logger.log(Level.INFO, () -> "Initializing folder cache from baseDir: " + baseDir);
+        loadFolderRecursively(baseDir);
+        logger.log(Level.INFO, () -> "Folder cache initialized with " + folderCache.size() + " folders");
+    }
+
+    private void loadFolderRecursively(String dirPath) {
+        try {
+            Folder folder = loadFolder(dirPath);
+            folderCache.put(dirPath, folder);
+
+            for (String subfolderPath : folder.getFolders()) {
+                try {
+                    URI subfolderUri = new URI(subfolderPath);
+                    loadFolderRecursively(subfolderUri.toString());
+                } catch (URISyntaxException e) {
+                    logger.log(Level.WARNING, () -> "Invalid URI for subfolder: " + subfolderPath);
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, () -> "Error loading folder: " + dirPath + " - " + e.toString());
+        }
+    }
+
     public Folder getFolder(String entryPoint) {
-        List<String> includeExtensions = Stream.of(fileFilter.split(",", -1))
-                .collect(Collectors.toList());
-
-        Folder folder = new Folder();
-
         String dir;
-        if (entryPoint != null) {
+        if ((entryPoint != null) && (!entryPoint.equalsIgnoreCase(""))) {
             dir = UrlEscapers.urlFragmentEscaper().escape(entryPoint);
         } else {
             dir = baseDir;
         }
 
+        if (folderCache.containsKey(dir)) {
+            return folderCache.get(dir);
+        }
+
+        Folder folder = loadFolder(dir);
+        folderCache.put(dir, folder);
+        return folder;
+    }
+
+    private Folder loadFolder(String dir) {
+        List<String> includeExtensions = Stream.of(fileFilter.split(",", -1))
+                .toList();
+
+        Folder folder = new Folder();
         folder.setMrl(dir);
 
         Path path;
@@ -73,7 +113,7 @@ public class FileService {
         } catch (IOException | DirectoryIteratorException x) {
             // IOException can never be thrown by the iteration.
             // In this snippet, it can only be thrown by newDirectoryStream.
-            logger.log(Level.ALL, () -> "Exception caught in getFolder(): " + x.toString());
+            logger.log(Level.ALL, () -> "Exception caught in loadFolder(): " + x.toString());
         }
 
         // Sort the lists before returning.
