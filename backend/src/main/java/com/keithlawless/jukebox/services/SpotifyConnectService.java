@@ -106,7 +106,13 @@ public class SpotifyConnectService implements DisposableBean {
                     new InputStreamReader(librespotProcess.getErrorStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    logger.warning("[librespot ERROR] " + line);
+                    Level logLevel = Level.INFO;
+                    if (line.contains(" WARN ")) {
+                        logLevel = Level.WARNING;
+                    } else if (line.contains(" ERROR ")) {
+                        logLevel = Level.SEVERE;
+                    }
+                    logger.log(logLevel, "[librespot] " + line);
                 }
             } catch (IOException e) {
                 logger.log(Level.WARNING, "Error reading librespot error stream", e);
