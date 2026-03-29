@@ -138,8 +138,10 @@ public class MediaService {
         ArrayList<MediaMeta> newList = new ArrayList<>();
         for( MusicResourceLocator mrl : songQueue.list()) {
             MediaMeta mediaMeta = tagService.readTags(mrl.getMrl());
-            mediaMeta.setPlayState(PlayState.QUEUED);
-            newList.add(mediaMeta);
+            if (mediaMeta != null) {
+                mediaMeta.setPlayState(PlayState.QUEUED);
+                newList.add(mediaMeta);
+            }
         }
 
         metaList.setQueue(newList);

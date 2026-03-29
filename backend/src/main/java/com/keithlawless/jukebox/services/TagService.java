@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 public class TagService {
     private static final Logger logger = Logger.getLogger(TagService.class.getName());
 
+    private static final String UNKNOWN = "Unknown";
+
     public MediaMeta readTags(String mrl) {
         String targetMrl;
 
@@ -34,10 +36,11 @@ public class TagService {
         mediaMeta.setMrl(targetMrl);
 
         // If an internet stream, don't attempt to extract tags
-        if(targetMrl.startsWith("file") == false) {
+        if(!targetMrl.startsWith("file")) {
             mediaMeta.setArtist("Internet Radio");
             mediaMeta.setAlbum("");
             mediaMeta.setTitle("");
+            mediaMeta.setTrackNumber("");
             return mediaMeta;
         }
 
@@ -57,9 +60,14 @@ public class TagService {
             mediaMeta.setArtist(tag.getFirst(FieldKey.ARTIST));
             mediaMeta.setAlbum(tag.getFirst(FieldKey.ALBUM));
             mediaMeta.setTitle(tag.getFirst(FieldKey.TITLE));
+            mediaMeta.setTrackNumber(tag.getFirst(FieldKey.TRACK));
         }
         catch(Exception e) {
             logger.info("Exception in readTags(): " + e.toString());
+            mediaMeta.setArtist(UNKNOWN);
+            mediaMeta.setAlbum(UNKNOWN);
+            mediaMeta.setTitle(UNKNOWN);
+            mediaMeta.setTrackNumber("");
         }
 
         return mediaMeta;
