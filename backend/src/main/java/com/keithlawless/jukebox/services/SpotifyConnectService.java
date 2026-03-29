@@ -35,6 +35,12 @@ public class SpotifyConnectService implements DisposableBean {
     @Value("${com.keithlawless.jukebox.spotify.cache}")
     private String cachePath;
 
+    @Value("${com.keithlawless.jukebox.spotify.initial.volume}")
+    private String initialVolume;
+
+    @Value("${com.keithlawless.jukebox.spotify.volume.ctrl}")
+    private String volumeCtrl;
+
     private AudioSource currentAudioSource = AudioSource.LOCAL;
     private boolean spotifyActive = false;
     private Process librespotProcess = null;
@@ -80,6 +86,10 @@ public class SpotifyConnectService implements DisposableBean {
         command.add(bitrate);
         command.add("--cache");
         command.add(cachePath);
+        command.add("--initial-volume");
+        command.add(initialVolume);
+        command.add("--volume-ctrl");
+        command.add(volumeCtrl);
 
         logger.info("Starting librespot with command: " + String.join(" ", command));
 
