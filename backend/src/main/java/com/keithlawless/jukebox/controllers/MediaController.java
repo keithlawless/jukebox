@@ -3,6 +3,7 @@ package com.keithlawless.jukebox.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.keithlawless.jukebox.entity.MusicResourceLocator;
+import com.keithlawless.jukebox.enums.AudioSource;
 import com.keithlawless.jukebox.services.MediaService;
 
 import java.util.logging.Logger;
@@ -54,6 +55,21 @@ public class MediaController {
 
     @GetMapping("/next")
     public MusicResourceLocator next() { return mediaService.playNext(); }
+
+    @PostMapping("/spotify/activate")
+    public void activateSpotify() {
+        mediaService.switchToSpotifyMode();
+    }
+
+    @PostMapping("/spotify/deactivate")
+    public void deactivateSpotify() {
+        mediaService.switchToLocalMode();
+    }
+
+    @GetMapping("/source")
+    public AudioSource getAudioSource() {
+        return mediaService.getCurrentAudioSource();
+    }
 
 }
 

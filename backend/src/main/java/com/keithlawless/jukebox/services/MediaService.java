@@ -8,6 +8,7 @@ import com.keithlawless.jukebox.components.VLCComponent;
 import com.keithlawless.jukebox.entity.MediaMeta;
 import com.keithlawless.jukebox.entity.MetaList;
 import com.keithlawless.jukebox.entity.MusicResourceLocator;
+import com.keithlawless.jukebox.enums.AudioSource;
 import com.keithlawless.jukebox.enums.PlayState;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class MediaService {
 
     @Autowired
     SongQueue songQueue;
+
+    @Autowired
+    SpotifyConnectService spotifyConnectService;
 
     @Value("${com.keithlawless.jukebox.controllers.autoplay}")
     private Boolean autoPlay;
@@ -71,6 +75,10 @@ public class MediaService {
         if (musicResourceLocator != null) {
             String mrl = musicResourceLocator.getMrl();
             if (mrl != null) {
+                if (spotifyConnectService.isSpotifyActive()) {
+                    logger.info("Cannot play local media - Spotify Connect is active. Switching to local mode.");
+                    spotifyConnectService.setAudioSource(AudioSource.LOCAL);
+                }
                 vlcComponent.play(mrl);
             } else {
                 logger.info("MusicResourceLocator object did not contain an mrl.");
@@ -89,6 +97,7 @@ public class MediaService {
     public MediaMeta getMeta() {
         if(this.mediaMeta != null) {
             this.mediaMeta.setPlayState(this.playState);
+            this.mediaMeta.setAudioSource(spotifyConnectService.getCurrentAudioSource());
         }
         return this.mediaMeta;
     }
@@ -142,4 +151,30 @@ public class MediaService {
     }
 
     public void setElapsedTime(long time) { this.mediaMeta.setElapsedTime(time); }
+
+    public synchronized void switchToSpotifyMode() {
+        logger.info("Switching to Spotify Connect mode");
+        if(nowPlaying != null) {
+            vlcComponent.stop();
+            nowPlaying = null;
+        }
+        spotifyConnectService.activateSpotifyMode();
+
+        MediaMeta spotifyMeta = new MediaMeta();
+        spotifyMeta.setTitle("Spotify Connect Active");
+        spotifyMeta.setArtist("Control via Spotify app");
+        spotifyMeta.setAudioSource(AudioSource.SPOTIFY);
+        spotifyMeta.setPlayState(PlayState.PLAYING);
+        this.mediaMeta = spotifyMeta;
+    }
+
+    public synchronized void switchToLocalMode() {
+        logger.info("Switching to local playback mode");
+        spotifyConnectService.deactivateSpotifyMode();
+        this.mediaMeta = null;
+    }
+
+    public AudioSource getCurrentAudioSource() {
+        return spotifyConnectService.getCurrentAudioSource();
+    }
 }

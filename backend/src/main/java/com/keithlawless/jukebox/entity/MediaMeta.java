@@ -1,5 +1,6 @@
 package com.keithlawless.jukebox.entity;
 
+import com.keithlawless.jukebox.enums.AudioSource;
 import com.keithlawless.jukebox.enums.PlayState;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ public class MediaMeta implements Serializable {
     private long duration;
     private long elapsedTime;
     private PlayState playState;
+    private AudioSource audioSource;
 
     public String getMrl() {
         return mrl;
@@ -67,5 +69,13 @@ public class MediaMeta implements Serializable {
 
     public void setPlayState(PlayState playState) {
         this.playState = playState;
+    }
+
+    public AudioSource getAudioSource() {
+        return audioSource;
+    }
+
+    public void setAudioSource(AudioSource audioSource) {
+        this.audioSource = audioSource;
     }
 }
